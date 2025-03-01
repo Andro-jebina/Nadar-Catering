@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nadar Catering</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous">
+</head>
+<script src="script.js"></script>
+<script>
+    let grandTotal = 0; // Store total for sending to backend
+
+    function calculateTotal() {
+        let idlyPrice = 10, chapatiPrice = 15, pooriPrice = 20;
+        let gstRate = 5, sstRate = 8;
+
+        let idlyQty = Math.max(0, parseInt(document.getElementById("idlyQty").value) || 0);
+        let chapatiQty = Math.max(0, parseInt(document.getElementById("chapatiQty").value) || 0);
+        let pooriQty = Math.max(0, parseInt(document.getElementById("pooriQty").value) || 0);
+
+        let subtotal = (idlyQty * idlyPrice) + (chapatiQty * chapatiPrice) + (pooriQty * pooriPrice);
+        let gstAmount = (subtotal * gstRate) / 100;
+        let sstAmount = (subtotal * sstRate) / 100;
+        grandTotal = subtotal + gstAmount + sstAmount;
+
+        document.getElementById("subtotal").innerText = "Subtotal: ₹" + subtotal.toFixed(2);
+        document.getElementById("gst").innerText = "GST (5%): ₹" + gstAmount.toFixed(2);
+        document.getElementById("sst").innerText = "SST (8%): ₹" + sstAmount.toFixed(2);
+        document.getElementById("grandTotal").innerText = "Grand Total: ₹" + grandTotal.toFixed(2);
+
+        // Update input values to prevent negatives
+        document.getElementById("idlyQty").value = idlyQty;
+        document.getElementById("chapatiQty").value = chapatiQty;
+        document.getElementById("pooriQty").value = pooriQty;
+    }
+
+
+    function placeOrder() {
+        let orderData = {
+            idly: parseInt(document.getElementById("idlyQty").value) || 0,
+            chapati: parseInt(document.getElementById("chapatiQty").value) || 0,
+            poori: parseInt(document.getElementById("pooriQty").value) || 0
+        };
+
+        fetch("http://localhost:5000/calculate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert("✅ Thank you for your order!\nTotal: ₹" + data["Grand Total"]);
+            })
+            .catch(error => console.error("Error:", error));
+    }
+</script>
+
+
+
+
+<body>
+    <nav>
+        <nav class="items">
+            <img src="img/idly.jpeg" alt="">
+            <a href="#1">Home</a>
+            <a href="#2">Menu</a>
+            <a href="#3">Special</a>
+            <a href="#4">About us</a>
+            <div class="btn-nav"><button class="btn-1"> Contact Us</button></div>
+        </nav>
+    </nav>
+
+    <section class="contact">
+        <div class="contact-head">
+            <h1>Get in touch with <b>Nadar Catering</b></h1>
+            <div class="contact-info">
+                <p>+91795979623</p>
+                <p>nadarcatering@gmail.com</p>
+                <p>8/617 Nandhampakkam Kundrathur Chennai-69</p>
+            </div>
+
+            <form action="https://api.web3forms.com/submit" method="POST" class="contact-form">
+                <input type="hidden" name="access_key" value="3a62257b-e3d3-4f5b-85aa-b81aad53f1e7">
+                <!-- form inputs -->
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="number" name="number" placeholder="Phone" required>
+                <input type="text" name="location" placeholder="Location" required>
+                <!-- <textarea name="Order" placeholder="Order" required></textarea> -->
+                <label>Idly (₹10): <input type="number" name="idly" id="idlyQty" value="0"
+                        onchange="calculateTotal()"></label><br>
+                <label>Chapati (₹15): <input type="number" name="chapati" id="chapatiQty" value="0"
+                        onchange="calculateTotal()"></label><br>
+                <label>Poori (₹20): <input type="number" name="poori" id="pooriQty" value="0"
+                        onchange="calculateTotal()"></label><br>
+
+                        <div class="last">
+                            <h3 id="subtotal"  style="font-size: medium; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Subtotal: <span class="value">₹0</span> </h3>
+                            <h3 id="gst" style="font-size: medium; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">GST (5%):<span class="value">₹0</span> </h3>
+                            <h3 id="sst" style="font-size: medium; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">SST (8%):<span class="value"> ₹0</span></h3><br>
+                            <h2 id="grandTotal" style="font-size: 32px ;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Grand Total:<span class="value">₹0</span> </h2>
+            
+                            <!-- <button id="payNow">Pay Now</button> -->
+                            <!-- <button class="btn-2 btn-contact btn-product">Submit</button> -->
+                            <div class="bottem">
+                                <button onclick="placeOrder()" class="btn-1" >Submit</button>
+                            </div>
+                        </div>
+
+            </form>
+
+            
+            
+        </div>
+        <div class="contact-img">
+            <img src="img/idly.jpeg" alt="img">
+            <img src="img/chutney-2.jpeg" alt="img">
+            <img src="img/chutney-1.jpeg" alt="img">
+            <img src="img/sambar.jpeg" alt="img">
+            <img src="img/kesari-2.jpeg" alt="">
+            <img src="img/pongal.jpeg" alt="">
+        </div>
+
+    </section>
+
+
+    <!-- footer -->
+    <footer>
+        <a href="/">
+            <h1>Nadar Catering</h1>
+        </a>
+
+        <div class="socials">
+            <!-- facebook -->
+            <a href="facebook.com">
+                <div class="social-box">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </div>
+            </a>
+            <!-- twitter -->
+            <a href="twitter.com">
+                <div class="social-box">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+            </a>
+            <!-- instagram -->
+            <a href="instagram.com">
+                <div class="social-box">
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+            </a>
+
+
+        </div>
+    </footer>
+</body>
+
+</html>
