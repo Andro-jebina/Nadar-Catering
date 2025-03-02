@@ -5,12 +5,11 @@ from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
+application = app  # Gunicorn expects 'application' by default
 CORS(app)  # Allow frontend to communicate with backend
 
 # Use environment variable or default to localhost
-app.config["MONGO_URI"] = os.getenv(
-    "MONGO_URI", "mongodb://localhost:27017/cateringDB"
-)
+app.config["MONGO_URI"] = os.getenv("MONGO_URI", "mongodb://localhost:27017/cateringDB")
 mongo = PyMongo(app)
 
 # Item Prices & Tax Rates
@@ -20,7 +19,7 @@ SST_RATE = 8  # 8%
 
 @app.route('/calculate', methods=['POST'])
 def calculate_bill():
-    data = request.json  
+    data = request.json  # Get order details
 
     subtotal = sum(data.get(item, 0) * ITEM_PRICES.get(item, 0) for item in ITEM_PRICES)
     gst_amount = (subtotal * GST_RATE) / 100
@@ -45,3 +44,6 @@ def calculate_bill():
         "SST": sst_amount,
         "Grand Total": grand_total
     })
+
+if __name__ == '__main__':
+    application.run(debug=True)
