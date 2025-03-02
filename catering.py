@@ -8,7 +8,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Server is running"
+    return render_template("index.html")
+
 
 application = app  # Gunicorn expects 'application' by default
 CORS(app)  # Allow frontend to communicate with backend
